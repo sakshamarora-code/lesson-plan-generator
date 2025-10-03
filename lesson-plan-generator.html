@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBSE Lesson Plan Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for generated plan to ensure proper PDF/DOCX rendering */
+        #lessonPlanOutput {
+            font-family: 'Times New Roman', Times, serif;
+            color: #000;
+        }
+        #lessonPlanOutput .header-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        #lessonPlanOutput .header-dates {
+            text-align: center;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        #lessonPlanOutput .info-block {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        #lessonPlanOutput .info-block strong {
+            font-weight: 700;
+        }
+        #lessonPlanOutput .day-header {
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            padding: 0.5rem 0;
+        }
+        #lessonPlanOutput .section-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+         #lessonPlanOutput ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        #lessonPlanOutput .flow-item {
+            margin-bottom: 0.5rem;
+        }
+        #lessonPlanOutput .sdg-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+            margin: 1rem auto;
+            padding: 0;
+            max-width: 500px;
+        }
+        #lessonPlanOutput .sdg-item {
+            border: 1px solid #ccc;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        #lessonPlanOutput .sdg-item.highlight {
+            border: 2px solid #000000;
+            background-color: #d3d3d3; /* light gray */
+            color: #000000;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
+    <div class="w-full max-w-4xl mx-auto">
+        <div class="bg-white rounded-2xl shadow-lg p-6 sm:p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-800">CBSE Lesson Plan Generator</h1>
+                <p class="text-gray-500 mt-2">Design structured lesson plans aligned with the CBSE curriculum.</p>
+            </div>
+
+            <!-- Input Form -->
+            <form id="lessonPlanForm" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <label for="class" class="block text-sm font-medium text-gray-700 mb-1">Class</label>
+                    <input type="text" id="class" name="class" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., X" required>
+                </div>
+                <div>
+                    <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                    <input type="text" id="subject" name="subject" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., SCIENCE" required>
+                </div>
+                <div class="md:col-span-2">
+                    <label for="topic" class="block text-sm font-medium text-gray-700 mb-1">Topic</label>
+                    <input type="text" id="topic" name="topic" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Control and Coordination" required>
+                </div>
+                 <div>
+                    <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <input type="date" id="startDate" name="startDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
+                </div>
+                <div>
+                    <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <input type="date" id="endDate" name="endDate" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
+                </div>
+                <div class="md:col-span-2">
+                    <label for="reference" class="block text-sm font-medium text-gray-700 mb-1">Book / Reference Material</label>
+                    <input type="text" id="reference" name="reference" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., NCERT Science Class 10" required>
+                </div>
+                <div>
+                    <label for="subjectIntegration" class="block text-sm font-medium text-gray-700 mb-1">Subject Integration (Optional)</label>
+                    <input type="text" id="subjectIntegration" name="subjectIntegration" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., Art, Digital Literacy">
+                </div>
+                <div>
+                    <label for="sdgLink" class="block text-sm font-medium text-gray-700 mb-1">Relevant SDG Numbers (Optional)</label>
+                    <input type="text" id="sdgLink" name="sdgLink" class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="e.g., 3, 4, 12">
+                </div>
+                <div class="md:col-span-2 text-center">
+                    <button type="submit" id="generateBtn" class="w-full md:w-auto bg-indigo-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300">
+                        Generate Lesson Plan
+                    </button>
+                </div>
+            </form>
+            
+            <div id="messageArea" class="text-center text-red-500 font-medium mb-4"></div>
+
+            <div id="outputSection" class="hidden">
+                <div id="lessonPlanOutput" class="p-6 border border-gray-200 rounded-lg bg-white">
+                    <!-- Generated content will be injected here -->
+                </div>
+                <div id="downloadButtons" class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+                     <button id="downloadPdf" class="w-full sm:w-auto bg-red-500 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-red-600">Download as .pdf</button>
+                     <button id="downloadDocx" class="w-full sm:w-auto bg-blue-500 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-blue-600">Download as .docx</button>
+                </div>
+            </div>
+        </div>
+        <footer class="text-center text-gray-500 text-sm mt-6">
+            <p>Developed to streamline lesson planning for educators.</p>
+            <p>© 2025 SAKSHAM ARORA</p>
+        </footer>
+    </div>
+
+    <!-- Moved scripts to the end of body for robust loading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html-to-docx-ts@1.8.0/dist/html-to-docx.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('lessonPlanForm');
+            const outputSection = document.getElementById('outputSection');
+            const lessonPlanOutput = document.getElementById('lessonPlanOutput');
+            const messageArea = document.getElementById('messageArea');
+            const generateBtn = document.getElementById('generateBtn');
+
+            const calculateWeekdays = (startDate, endDate) => {
+                let count = 0;
+                const curDate = new Date(startDate.getTime());
+                while (curDate <= endDate) {
+                    const dayOfWeek = curDate.getDay();
+                    if (dayOfWeek !== 0 && dayOfWeek !== 6) { // 0 = Sunday, 6 = Saturday
+                        count++;
+                    }
+                    curDate.setDate(curDate.getDate() + 1);
+                }
+                return count;
+            };
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                messageArea.textContent = '';
+
+                generateBtn.disabled = true;
+                generateBtn.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Generating...`;
+
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                if (!data.class || !data.subject || !data.topic || !data.reference || !data.startDate || !data.endDate) {
+                    messageArea.textContent = 'Please fill in all required fields.';
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = 'Generate Lesson Plan';
+                    return;
+                }
+                
+                const startDate = new Date(data.startDate);
+                const endDate = new Date(data.endDate);
+
+                if (endDate < startDate) {
+                    messageArea.textContent = 'End Date cannot be before Start Date.';
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = 'Generate Lesson Plan';
+                    return;
+                }
+
+                const duration = calculateWeekdays(startDate, endDate);
+                if (duration <= 0) {
+                    messageArea.textContent = 'The selected date range has no teaching days (weekdays).';
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = 'Generate Lesson Plan';
+                    return;
+                }
+
+
+                const apiKey = "AIzaSyB9IVwL5bSWvfvt2rJH_JUSnlQc1y2kg64"; // API key is handled by the environment
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+
+                const systemPrompt = `You are an expert CBSE curriculum developer. Create a highly detailed, structured lesson plan based on the user's inputs.
+
+                CRITICAL INSTRUCTIONS:
+                1.  **Age Appropriateness:** You MUST adjust the complexity of the content, activities, and questions based on the provided class level. A lesson for Class 7 should use simpler language, more hands-on activities, and less abstract concepts compared to a lesson for Class 12, which must include in-depth analysis and complex problems. This is the most important rule.
+                2.  **Book-Referenced Content:** The entire lesson plan, especially the breakdown of sub-topics for each day, MUST be logically structured based on the content typically found in the specified **Book/Reference Material**. You must act as if you are using that book to create the plan.
+                3.  **Format Adherence:** The output must be ONLY the raw HTML content for the daily plans, ready to be injected into a div. Start directly with the first day's header. Do not include \`\`\`html, markdown, or any explanation.
+
+                Here is the required HTML structure for EACH period/day:
+                
+                <div class="day-header">DAY [X] – [Sub-topic Title based on Book/Reference]</div>
+                <p class="section-title">Expected Learning Outcomes:</p>
+                <ul><li>[Outcome 1]</li><li>[Outcome 2]</li></ul>
+                <p class="section-title">Competencies:</p>
+                <p>[List of relevant competencies like: Critical Thinking, Scientific Inquiry, Collaboration]</p>
+                <p class="section-title">Flow with Time (35-40 min):</p>
+                <div class="flow-item"><strong>Warm-Up (5 min):</strong> [An engaging, age-appropriate SEL or inquiry-based activity]</div>
+                <div class="flow-item"><strong>Teacher Task (10–15 min):</strong> [Explanation/demonstration leveraging the specified book]</div>
+                <div class="flow-item"><strong>Student Task (10–15 min):</strong> [A practical, age-appropriate activity, group work, or discussion]</div>
+                <div class="flow-item"><strong>Closure (3–5 min):</strong> [Summary and a HOTS (Higher Order Thinking Skills) question]</div>
+                <p class="section-title">AFL / AOL:</p>
+                <p>[Specific assessment techniques like: Exit slip, Peer-check, Quiz.]</p>
+                <p class="section-title">Resources:</p>
+                <p>[List resources, ALWAYS starting with the specified Book/Reference]</p>
+                <p class="section-title">Differentiation Strategies:</p>
+                <p><strong>Support:</strong> [Strategy for students needing help, e.g., "Provide a visual glossary for key terms."]<br><strong>Challenge:</strong> [Strategy for advanced students, e.g., "Ask them to research a real-world application."]</p>
+                <p class="section-title">Home Fun:</p>
+                <p>[A practical, real-life linked homework task]</p>`;
+
+                const userPrompt = `Generate a detailed lesson plan for ${duration} days.
+                - Class: ${data.class}
+                - Subject: ${data.subject}
+                - Topic: ${data.topic}
+                - Book/Reference: ${data.reference}
+                - Subject Integration: ${data.subjectIntegration || 'Not specified'}
+                - SDG Link: ${data.sdgLink || 'Not specified'}`;
+
+                const payload = {
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    contents: [{ parts: [{ text: userPrompt }] }],
+                };
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`API error: ${response.status} ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (generatedText) {
+                        const academicYear = `${new Date().getFullYear()}-${String(new Date().getFullYear() + 1).slice(-2)}`;
+                        const subjectIntegration = data.subjectIntegration || `[AI Suggested: Art, English]`;
+                        const bigQuestion = `How does the study of '${data.topic}' as per the '${data.reference}' help us understand its impact on our world?`;
+                        const dateRange = `${startDate.toLocaleDateString()} TO ${endDate.toLocaleDateString()}`;
+                        
+                        const sdgNumbers = data.sdgLink ? data.sdgLink.split(',').map(s => s.trim().replace(/\D/g, '')) : [];
+                        let sdgGridHtml = '<div class="sdg-grid">';
+                        for (let i = 1; i <= 17; i++) {
+                            const isHighlighted = sdgNumbers.includes(String(i));
+                            sdgGridHtml += `<div class="sdg-item ${isHighlighted ? 'highlight' : ''}">${i}</div>`;
+                        }
+                        sdgGridHtml += '</div>';
+
+                        const headerHtml = `
+                            <div style="text-align:center; margin-bottom: 2rem;">
+                            </div>
+                            <div class="header-title">LESSON PLANNER (${academicYear})</div>
+                            <div class="header-dates">${dateRange}</div>
+                            <div class="info-block">
+                                <p><strong>Class :</strong> ${data.class}</p>
+                                <p><strong>Subject :</strong> ${data.subject}</p>
+                                <p><strong>Topic :</strong> ${data.topic}</p>
+                                <p><strong>Subject Integration:</strong> ${subjectIntegration}</p>
+                                <p><strong>Big Question :</strong> ${bigQuestion}</p>
+                                <p><strong>SDG:</strong></p>
+                            </div>
+                            ${sdgGridHtml}`;
+
+                        lessonPlanOutput.innerHTML = headerHtml + generatedText;
+                        outputSection.classList.remove('hidden');
+                        outputSection.scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        messageArea.textContent = 'Failed to generate plan. The API returned an empty response.';
+                    }
+                } catch (error) {
+                    console.error('Error calling Gemini API:', error);
+                    messageArea.textContent = 'An error occurred while generating the plan. Please check the console.';
+                } finally {
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = 'Generate Lesson Plan';
+                }
+            });
+
+            function getFilename() {
+                const cls = document.getElementById('class').value || 'Class';
+                const subject = document.getElementById('subject').value || 'Subject';
+                const topic = document.getElementById('topic').value.replace(/[^a-z0-9]/gi, '_') || 'Topic';
+                return `LessonPlan_${cls}_${subject}_${topic}`;
+            }
+
+            document.getElementById('downloadPdf').addEventListener('click', () => {
+                const element = document.getElementById('lessonPlanOutput');
+                const filename = getFilename() + '.pdf';
+                html2pdf().from(element).set({
+                    margin: 0.75,
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                }).save();
+            });
+
+            document.getElementById('downloadDocx').addEventListener('click', () => {
+                const filename = getFilename() + '.docx';
+                const contentElement = document.getElementById('lessonPlanOutput').cloneNode(true);
+                const images = contentElement.getElementsByTagName('img');
+                const promises = Array.from(images).map(img => {
+                    // Using a CORS proxy for images that might not be directly accessible
+                    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+                    return fetch(proxyUrl + img.src)
+                        .then(res => res.blob())
+                        .then(blob => new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onloadend = () => resolve(reader.result);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(blob);
+                        }))
+                        .then(dataUrl => { img.src = dataUrl; })
+                        .catch(err => console.error("Could not convert image to base64:", img.src, err));
+                });
+
+                Promise.all(promises).then(() => {
+                    const styledContent = `<!DOCTYPE html><html><head><style>
+                        body { font-family: 'Times New Roman', Times, serif; font-size: 12pt; }
+                        p, li { margin: 5px 0; } strong { font-weight: bold; }
+                        ul { list-style-position: inside; padding-left: 0; }
+                    </style></head><body>${contentElement.innerHTML}</body></html>`;
+                    
+                    if (typeof htmlToDocx !== 'undefined') {
+                        htmlToDocx.generate(styledContent).then(docx => {
+                           saveAs(docx, filename);
+                        });
+                    } else {
+                        console.error("html-to-docx.js library not loaded correctly.");
+                        messageArea.textContent = "Could not download .docx file. The required library failed to load.";
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
