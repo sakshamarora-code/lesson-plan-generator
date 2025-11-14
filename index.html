@@ -90,7 +90,6 @@
                 <p class="text-gray-500 mt-2">Design structured lesson plans aligned with the CBSE curriculum.</p>
             </div>
 
-            <!-- Input Form -->
             <form id="lessonPlanForm" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div>
                     <label for="class" class="block text-sm font-medium text-gray-700 mb-1">Class</label>
@@ -135,8 +134,7 @@
 
             <div id="outputSection" class="hidden">
                 <div id="lessonPlanOutput" class="p-6 border border-gray-200 rounded-lg bg-white">
-                    <!-- Generated content will be injected here -->
-                </div>
+                    </div>
                 <div id="downloadButtons" class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
                      <button id="downloadPdf" class="w-full sm:w-auto bg-red-500 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-red-600">Download as .pdf</button>
                      <button id="downloadDocx" class="w-full sm:w-auto bg-blue-500 text-white font-semibold py-2 px-6 rounded-lg shadow-md hover:bg-blue-600">Download as .docx</button>
@@ -149,7 +147,6 @@
         </footer>
     </div>
 
-    <!-- Moved scripts to the end of body for robust loading -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/html-to-docx-ts@1.8.0/dist/html-to-docx.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -215,9 +212,7 @@
                     return;
                 }
 
-
-                const apiKey = "AIzaSyAE0oQbyuuweyTAaAB8ZnARyaXCCMgv5J4"; // API key is handled by the environment
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                // *** THE API KEY IS REMOVED FROM HERE ***
 
                 const systemPrompt = `You are an expert CBSE curriculum developer. Create a highly detailed, structured lesson plan based on the user's inputs.
 
@@ -255,20 +250,27 @@
                 - Subject Integration: ${data.subjectIntegration || 'Not specified'}
                 - SDG Link: ${data.sdgLink || 'Not specified'}`;
 
+                // This is the payload to send to YOUR function
                 const payload = {
                     systemInstruction: { parts: [{ text: systemPrompt }] },
                     contents: [{ parts: [{ text: userPrompt }] }],
                 };
 
                 try {
-                    const response = await fetch(apiUrl, {
+                    // *** THIS IS THE CHANGED PART ***
+                    // We call your Netlify Function, not the Google API
+                    const response = await fetch('/.netlify/functions/generate-plan', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify({ // Send the prompts to your function
+                           systemPrompt: systemPrompt,
+                           userPrompt: userPrompt
+                        }) 
                     });
 
                     if (!response.ok) {
-                        throw new Error(`API error: ${response.status} ${response.statusText}`);
+                        const errorResult = await response.json();
+                        throw new Error(`Function error: ${errorResult.error || response.statusText}`);
                     }
 
                     const result = await response.json();
@@ -310,8 +312,8 @@
                         messageArea.textContent = 'Failed to generate plan. The API returned an empty response.';
                     }
                 } catch (error) {
-                    console.error('Error calling Gemini API:', error);
-                    messageArea.textContent = 'An error occurred while generating the plan. Please check the console.';
+                    console.error('Error calling Netlify function:', error);
+                    messageArea.textContent = `An error occurred: ${error.message}. Please check the console.`;
                 } finally {
                     generateBtn.disabled = false;
                     generateBtn.innerHTML = 'Generate Lesson Plan';
@@ -342,7 +344,6 @@
                 const contentElement = document.getElementById('lessonPlanOutput').cloneNode(true);
                 const images = contentElement.getElementsByTagName('img');
                 const promises = Array.from(images).map(img => {
-                    // Using a CORS proxy for images that might not be directly accessible
                     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
                     return fetch(proxyUrl + img.src)
                         .then(res => res.blob())
@@ -377,4 +378,3 @@
     </script>
 </body>
 </html>
-
