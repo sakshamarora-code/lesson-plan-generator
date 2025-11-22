@@ -23,7 +23,7 @@ exports.handler = async (event) => {
   };
 
   // 5. This is the Google API URL. The key is safely used here on the server.
-  const apiUrl = `const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
   try {
     // 6. Call the Google API *from the server*
